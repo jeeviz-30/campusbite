@@ -1,0 +1,10 @@
+services:
+  - type: web
+    name: campusbite
+    runtime: static
+    staticPublishPath: src/main/webapp
+    buildCommand: ""
+    routes:
+      - type: redirect
+        source: /
+        destination: /login.html
