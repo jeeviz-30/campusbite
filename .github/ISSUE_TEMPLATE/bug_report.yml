@@ -1,0 +1,63 @@
+name: "🐛 Bug Report"
+description: "Report a reproducible problem or unexpected behavior"
+title: "[BUG]: "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report an issue! Please fill out the sections below.
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: A clear and concise description of the bug.
+      placeholder: Describe what happened...
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Exact steps to reproduce the behavior.
+      placeholder: |
+        1. Start MySQL and run schema.sql
+        2. Start the server (or Tomcat)
+        3. Navigate to '...'
+        4. Click on '...'
+        5. See error
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What you expected to happen.
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior / Screenshots / Logs
+      description: Provide stack traces, server logs, or screenshot links.
+    validations:
+      required: false
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Execution Environment
+      description: How are you running the application?
+      options:
+        - Standalone Java Server (Server.java)
+        - Apache Tomcat 10+ (WAR Deployment)
+        - Other
+    validations:
+      required: true
+  - type: input
+    id: os_browser
+    attributes:
+      label: OS and Browser
+      description: e.g., macOS / Chrome 120, Windows 11 / Edge
+      placeholder: macOS / Chrome
+    validations:
+      required: false

@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - Canteen Pre-Order System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            /* Update path/filename below to match your actual image file name */
+            background: url('images/back.jpg') no-repeat center center / cover;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Dark overlay to make the glass card text pop and stay readable */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 0;
+        }
+
+        /* Animated Background Gradients */
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* Glowing Orbs in Background for Depth */
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            z-index: 1;
+        }
+        .orb-1 {
+            width: 300px;
+            height: 300px;
+            background: #ff5722;
+            top: 10%;
+            left: 15%;
+        }
+        .orb-2 {
+            width: 350px;
+            height: 350px;
+            background: #dc2626;
+            bottom: 10%;
+            right: 15%;
+        }
+
+        /* Glassmorphism Card Container */
+        .glass-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 400px;
+            padding: 40px 30px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            color: #ffffff;
+            text-align: center;
+        }
+
+        /* Header / Logo */
+        .logo-icon {
+            background: linear-gradient(135deg, #ff5722, #e65100);
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 0 20px rgba(230, 81, 0, 0.6);
+        }
+
+        .glass-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .glass-card p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 30px;
+        }
+
+        /* Input Fields */
+        .input-group {
+            position: relative;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.8);
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .input-group input:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #ff5722;
+            box-shadow: 0 0 12px rgba(255, 87, 34, 0.4);
+        }
+
+        /* Login Button */
+        .login-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #dc2626, #ff5722);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .login-btn:hover {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+            transform: translateY(-2px);
+        }
+
+        /* Extra Links */
+        .footer-links {
+            margin-top: 20px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        .footer-links a {
+            color: #ff8a65;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Glow Elements -->
+    
+    <!-- Glassmorphism Form Card -->
+    <div class="glass-card">
+        <div class="logo-icon">🍴</div>
+        <h2>Canteen Hub</h2>
+        <p>Pre-Order & Skip the Queue</p>
+
+        <form onsubmit="handleLogin(event)">
+    <div class="input-group">
+        <label for="login-email">Student / Faculty ID</label>
+        <input type="text" id="login-email" placeholder="Enter your college ID or email" required>
+    </div>
+
+    <div class="input-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" required>
+    </div>
+
+    <button type="submit" class="login-btn">Sign In ➔</button>
+</form>
+
+        <div class="footer-links">
+            <span>Don't have an account? <a href="register.html">Register Here</a></span>
+        </div>
+    </div>
+    <script src="js/auth.js"></script>
+</body>
+</html>

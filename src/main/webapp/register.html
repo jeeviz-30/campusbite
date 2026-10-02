@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register - Canteen Pre-Order System</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+            /* Replace with your image file name inside the images folder */
+            background: url('images/back.jpg') no-repeat center center / cover;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Dark overlay to make text pop and maintain glassmorphism contrast */
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.55);
+            z-index: 0;
+        }
+
+        /* Glassmorphism Card Container */
+        .glass-card {
+            position: relative;
+            z-index: 10;
+            width: 100%;
+            max-width: 440px;
+            padding: 35px 30px;
+            background: rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+            color: #ffffff;
+            text-align: center;
+        }
+
+        /* Header / Logo */
+        .logo-icon {
+            background: linear-gradient(135deg, #ff5722, #e65100);
+            color: white;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 0 20px rgba(230, 81, 0, 0.6);
+        }
+
+        .glass-card h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+
+        .glass-card p {
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+            margin-bottom: 25px;
+        }
+
+        /* Input Fields */
+        .input-group {
+            position: relative;
+            margin-bottom: 16px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 11px;
+            font-weight: 600;
+            color: rgba(255, 255, 255, 0.85);
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+
+        .input-group input, .input-group select {
+            width: 100%;
+            padding: 11px 14px;
+            background: rgba(255, 255, 255, 0.07);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+            transition: all 0.3s ease;
+        }
+
+        .input-group select option {
+            background-color: #1e293b;
+            color: #ffffff;
+        }
+
+        .input-group input::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .input-group input:focus, .input-group select:focus {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: #ff5722;
+            box-shadow: 0 0 12px rgba(255, 87, 34, 0.4);
+        }
+
+        /* Form Row for 2 inputs side-by-side */
+        .form-row {
+            display: flex;
+            gap: 12px;
+        }
+
+        .form-row .input-group {
+            flex: 1;
+        }
+
+        /* Register Button */
+        .register-btn {
+            width: 100%;
+            padding: 12px;
+            margin-top: 10px;
+            background: linear-gradient(135deg, #dc2626, #ff5722);
+            border: none;
+            border-radius: 8px;
+            color: white;
+            font-size: 15px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(220, 38, 38, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .register-btn:hover {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.8);
+            transform: translateY(-2px);
+        }
+
+        /* Extra Links */
+        .footer-links {
+            margin-top: 20px;
+            font-size: 13px;
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        .footer-links a {
+            color: #ff8a65;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .footer-links a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Glassmorphism Registration Card -->
+    <div class="glass-card">
+        <div class="logo-icon">🍴</div>
+        <h2>Create Account</h2>
+        <p>Join Canteen Hub to pre-order meals</p>
+
+        <form onsubmit="handleRegister(event)">
+            <div class="input-group">
+                <label for="fullname">Full Name</label>
+                <input type="text" id="reg-name" placeholder="John Doe" required>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="college-id">College / ID No.</label>
+                    <input type="text" id="reg-college-id" placeholder="e.g. 21CS001" required>
+                </div>
+                <div class="input-group">
+                    <label for="role">Role</label>
+                    <select id="reg-role" required>
+                        <option value="student">Student</option>
+                        <option value="faculty">Faculty</option>
+                        <option value="staff">Canteen Staff</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="reg-email" placeholder="name@college.edu" required>
+            </div>
+
+            <div class="form-row">
+                <div class="input-group">
+                    <label for="password">Password</label>
+                    <input type="password" id="reg-password" placeholder="••••••••" required>
+                </div>
+                <div class="input-group">
+                    <label for="confirm-password">Confirm</label>
+                    <input type="password" id="confirm-password" placeholder="••••••••" required>
+                </div>
+            </div>
+
+            <button type="submit" class="register-btn">Create Account ➔</button>
+        </form>
+
+        <div class="footer-links">
+            <span>Already have an account? <a href="login.html">Sign In</a></span>
+        </div>
+    </div>
+    <script src="js/auth.js"></script>
+</body>
+</html>
