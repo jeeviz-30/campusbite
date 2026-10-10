@@ -178,6 +178,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const greetEl = document.getElementById('userGreeting');
   if (greetEl) greetEl.textContent = `Hi, ${user.name.split(' ')[0]}`;
 
+  // Request notification permission & start order status listener
+  requestNotifPermission();
+  startOrderListener(user.userId);
+
   renderCategories();
   renderFoodGrid();
   renderReviews();
@@ -388,14 +392,16 @@ function toggleCartModal() {
   }
 }
 
+// ── STEP 1: Open payment method selector ────────────────────
 function proceedToPayment() {
   if (cart.length === 0) {
     showToast('Add items to your tray before proceeding!', 'error');
     return;
   }
   const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-  document.getElementById('paymentModalTotal').textContent = `₹${total}`;
+  document.querySelectorAll('.pay-amount-display').forEach(el => el.textContent = `₹${total}`);
   toggleCartModal();
+  showPayStep('step-method');
   document.getElementById('paymentModal').classList.remove('hidden');
   document.getElementById('paymentModal').classList.add('flex');
 }
@@ -403,61 +409,131 @@ function proceedToPayment() {
 function closePaymentModal() {
   document.getElementById('paymentModal').classList.add('hidden');
   document.getElementById('paymentModal').classList.remove('flex');
+  showPayStep('step-method');
 }
 
-function confirmOrderPayment() {
-  if (cart.length === 0) {
-    showToast('Your cart is empty!', 'error');
-    return;
-  }
+function showPayStep(stepId) {
+  ['step-method','step-upi','step-card','step-cash'].forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('hidden', id !== stepId);
+  });
+}
 
+function selectUPI() {
+  const total = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const qrData = encodeURIComponent(`upi://pay?pa=campusbite@upi&pn=CampusBite&am=${total}&cu=INR`);
+  document.getElementById('upiQrImg').src = `https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=${qrData}`;
+  document.getElementById('upiAmtDisplay').textContent = `₹${total}`;
+  showPayStep('step-upi');
+}
+
+function selectCard() { showPayStep('step-card'); }
+function selectCash()  { showPayStep('step-cash'); }
+
+function formatCardNumber(el) {
+  let v = el.value.replace(/\D/g,'').slice(0,16);
+  el.value = v.replace(/(.{4})/g,'$1 ').trim();
+}
+function formatExpiry(el) {
+  let v = el.value.replace(/\D/g,'').slice(0,4);
+  if (v.length > 2) v = v.slice(0,2) + '/' + v.slice(2);
+  el.value = v;
+}
+
+let _activePayMethod = 'UPI';
+
+function confirmUPIPaid()  { _activePayMethod = 'UPI';  _placeOrder(); }
+function confirmCashPaid() { _activePayMethod = 'Cash'; _placeOrder(); }
+function confirmCardPaid() {
+  const num = document.getElementById('cardNumber')?.value.replace(/\s/g,'');
+  const exp = document.getElementById('cardExpiry')?.value;
+  const cvv = document.getElementById('cardCVV')?.value;
+  if (!num || num.length < 12 || !exp || !cvv || cvv.length < 3) {
+    showToast('Please enter valid card details.', 'error'); return;
+  }
+  _activePayMethod = 'Card'; _placeOrder();
+}
+
+function _placeOrder() {
   const user = JSON.parse(localStorage.getItem('canteen_session') || 'null');
+  if (!user || !user.userId) { window.location.href = 'login.html'; return; }
+  if (cart.length === 0) { showToast('Cart is empty!', 'error'); return; }
 
-  if (!user || !user.userId) {
-    showToast('Please login before placing an order.', 'error');
-    window.location.href = 'login.html';
-    return;
-  }
-
-  const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-
-  // Build order object
-  const order = {
+  const total    = cart.reduce((sum, i) => sum + i.price * i.qty, 0);
+  const pickupEl = document.getElementById('pickupTimeSelect');
+  const order    = {
     orderId:     Date.now(),
     userId:      user.userId,
     userName:    user.name,
     totalAmount: total,
     status:      'PENDING',
-    pickupTime:  document.getElementById('pickupTimeSelect')
-                   ? document.getElementById('pickupTimeSelect').value
-                   : 'Immediate',
+    pickupTime:  pickupEl ? pickupEl.value : 'Immediate',
+    payMethod:   _activePayMethod,
     createdAt:   new Date().toISOString(),
-    items: cart.map(item => ({
-      itemId:   item.id,
-      name:     item.name,
-      quantity: item.qty,
-      price:    item.price
-    }))
+    items: cart.map(i => ({ itemId: i.id, name: i.name, quantity: i.qty, price: i.price }))
   };
 
-  // Save to localStorage orders list
   const orders = JSON.parse(localStorage.getItem('canteen_orders') || '[]');
   orders.push(order);
   localStorage.setItem('canteen_orders', JSON.stringify(orders));
 
-  // Generate token number (last 4 digits of orderId)
   const token = String(order.orderId).slice(-4);
-
   closePaymentModal();
-
-  confetti({ particleCount: 120, spread: 70, origin: { y: 0.6 } });
-
-  cart = [];
-  updateCartUI();
-  renderFoodGrid();
-
-  showToast(`🎉 Order Placed! Token #${token} — Show at Counter 2`);
+  confetti({ particleCount: 150, spread: 80, origin: { y: 0.6 } });
+  cart = []; updateCartUI(); renderFoodGrid();
+  _showOrderConfirmModal(order, token);
 }
+
+function _showOrderConfirmModal(order, token) {
+  const qrData = encodeURIComponent(`CAMPUSBITE|TOKEN:${token}|ORDER:${order.orderId}|USER:${order.userName}|AMT:${order.totalAmount}`);
+  document.getElementById('confirmQRImg').src     = `https://api.qrserver.com/v1/create-qr-code/?size=220x220&data=${qrData}`;
+  document.getElementById('confirmToken').textContent  = `#${token}`;
+  document.getElementById('confirmTotal').textContent  = `₹${order.totalAmount}`;
+  document.getElementById('confirmPickup').textContent = order.pickupTime;
+  document.getElementById('confirmItems').textContent  = order.items.map(i=>`${i.name} ×${i.quantity}`).join(', ');
+  document.getElementById('confirmTime').textContent   = new Date(order.createdAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+  document.getElementById('orderConfirmModal').classList.remove('hidden');
+  document.getElementById('orderConfirmModal').classList.add('flex');
+}
+
+function closeOrderConfirmModal() {
+  document.getElementById('orderConfirmModal').classList.add('hidden');
+  document.getElementById('orderConfirmModal').classList.remove('flex');
+}
+
+// ── My Orders panel ──────────────────────────────────────────
+function toggleMyOrders() {
+  const panel = document.getElementById('myOrdersPanel');
+  if (panel.classList.contains('hidden')) {
+    refreshMyOrders(); panel.classList.remove('hidden'); panel.classList.add('flex');
+  } else { panel.classList.add('hidden'); panel.classList.remove('flex'); }
+}
+
+function refreshMyOrders() {
+  const user = JSON.parse(localStorage.getItem('canteen_session') || 'null');
+  if (!user) return;
+  const orders = JSON.parse(localStorage.getItem('canteen_orders') || '[]')
+    .filter(o => o.userId === user.userId).slice().reverse();
+  const container = document.getElementById('myOrdersList');
+  if (!container) return;
+  const SC = { PENDING:'bg-yellow-500/20 text-yellow-300 border-yellow-500/30', PREPARING:'bg-blue-500/20 text-blue-300 border-blue-500/30', READY_FOR_PICKUP:'bg-green-500/20 text-green-300 border-green-500/30', COMPLETED:'bg-slate-500/20 text-slate-400 border-slate-600/30' };
+  const SI = { PENDING:'⏳', PREPARING:'👨‍🍳', READY_FOR_PICKUP:'✅', COMPLETED:'🎉' };
+  if (orders.length === 0) { container.innerHTML = `<div class="text-center py-10 text-slate-400 text-sm">No orders yet.</div>`; return; }
+  container.innerHTML = orders.map(o => {
+    const token = String(o.orderId).slice(-4);
+    const items = o.items.map(i=>`${i.name} ×${i.quantity}`).join(', ');
+    const time  = new Date(o.createdAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+    return `<div class="p-4 rounded-2xl bg-slate-800 border border-slate-700 space-y-2">
+      <div class="flex items-center justify-between">
+        <span class="font-black text-white">Token <span class="text-orange-400">#${token}</span></span>
+        <span class="px-2.5 py-1 rounded-full text-[10px] font-black border ${SC[o.status]||SC.PENDING}">${SI[o.status]||'⏳'} ${o.status.replace(/_/g,' ')}</span>
+      </div>
+      <p class="text-xs text-slate-400 truncate">${items}</p>
+      <div class="flex justify-between text-xs text-slate-500"><span>₹${o.totalAmount} · ${o.pickupTime}</span><span>${time}</span></div>
+    </div>`;
+  }).join('');
+}
+
 
 
 // Copy to Clipboard Helper
