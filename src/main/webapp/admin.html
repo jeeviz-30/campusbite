@@ -8,7 +8,26 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
         * { box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; padding: 0; }
-        body { background: #f1f5f9; color: #1e293b; min-height: 100vh; }
+        body {
+            color: #1e293b;
+            min-height: 100vh;
+            background-image: url('images/food_bg.png');
+            background-size: cover;
+            background-attachment: fixed;
+            background-position: center;
+            position: relative;
+        }
+        /* White translucent overlay so cards are readable */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.72);
+            backdrop-filter: blur(1px);
+            z-index: 0;
+            pointer-events: none;
+        }
+        header, .tab-nav, .container { position: relative; z-index: 1; }
 
         /* Header */
         header { background: linear-gradient(135deg,#0f172a,#1e293b); color: white; padding: 16px 30px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 10px rgba(0,0,0,.3); }
