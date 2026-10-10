@@ -7,388 +7,316 @@
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-    /* ── Reset & Base ──────────────────────────────────────── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
         font-family: 'Segoe UI', system-ui, sans-serif;
+        background: #0f172a;
+        color: #f1f5f9;
         min-height: 100vh;
-        background: url('images/food_bg.png') center/cover fixed;
-        color: #1e293b;
-        overflow-x: hidden;
     }
 
-    /* Full-page overlay */
-    body::before {
-        content: '';
-        position: fixed; inset: 0;
-        background: linear-gradient(135deg,
-            rgba(255,237,213,0.55) 0%,
-            rgba(254,215,170,0.45) 40%,
-            rgba(253,186,116,0.35) 100%);
-        backdrop-filter: blur(2px);
-        z-index: 0;
-        pointer-events: none;
-    }
-
-    /* ── Glassmorphism mixins ───────────────────────────────── */
-    .glass {
-        background: rgba(255,255,255,0.55);
-        backdrop-filter: blur(20px) saturate(180%);
-        -webkit-backdrop-filter: blur(20px) saturate(180%);
-        border: 1px solid rgba(255,255,255,0.75);
-        box-shadow: 0 8px 32px rgba(249,115,22,0.10), 0 1.5px 8px rgba(0,0,0,0.06);
-    }
-    .glass-dark {
-        background: rgba(15,23,42,0.82);
-        backdrop-filter: blur(24px) saturate(180%);
-        -webkit-backdrop-filter: blur(24px) saturate(180%);
-        border-bottom: 1px solid rgba(255,255,255,0.10);
-    }
-    .glass-card {
-        background: rgba(255,255,255,0.60);
-        backdrop-filter: blur(18px) saturate(160%);
-        -webkit-backdrop-filter: blur(18px) saturate(160%);
-        border: 1px solid rgba(255,255,255,0.80);
-        border-radius: 20px;
-        box-shadow: 0 8px 32px rgba(249,115,22,0.10), 0 2px 8px rgba(0,0,0,0.05);
-        transition: transform .25s ease, box-shadow .25s ease;
-    }
-    .glass-card:hover {
-        transform: translateY(-3px);
-        box-shadow: 0 16px 40px rgba(249,115,22,0.18), 0 4px 16px rgba(0,0,0,0.08);
-    }
-
-    /* ── Header ────────────────────────────────────────────── */
+    /* ── Header ─────────────────────────────────────────────── */
     header {
-        position: relative; z-index: 20;
+        background: #1e293b;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
         padding: 14px 32px;
         display: flex; justify-content: space-between; align-items: center;
+        box-shadow: 0 4px 24px rgba(0,0,0,0.3);
     }
-    .brand {
-        font-size: 22px; font-weight: 900; color: #fff;
-        letter-spacing: -0.5px; text-shadow: 0 2px 8px rgba(0,0,0,0.3);
-    }
-    .brand span { color: #fb923c; }
+    .brand { font-size: 22px; font-weight: 900; color: #f1f5f9; letter-spacing: -0.5px; }
+    .brand span { color: #f97316; }
     .brand small {
-        font-size: 11px; font-weight: 600;
-        background: rgba(251,146,60,0.25); color: #fed7aa;
-        border: 1px solid rgba(251,146,60,0.4);
-        padding: 2px 8px; border-radius: 99px; margin-left: 8px;
-        vertical-align: middle;
+        font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+        background: rgba(249,115,22,0.15); color: #fb923c;
+        border: 1px solid rgba(249,115,22,0.3);
+        padding: 3px 10px; border-radius: 99px; margin-left: 10px; vertical-align: middle;
     }
-    .staff-info { display: flex; align-items: center; gap: 12px; }
-    .staff-pill {
-        display: flex; align-items: center; gap-8px;
-        background: rgba(255,255,255,0.12);
-        border: 1px solid rgba(255,255,255,0.2);
-        border-radius: 999px; padding: 6px 14px;
-        font-size: 13px; font-weight: 700; color: #fff;
-        gap: 8px;
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .staff-badge {
+        display: flex; align-items: center; gap: 8px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 99px; padding: 7px 16px;
+        font-size: 13px; font-weight: 700; color: #cbd5e1;
     }
-    .staff-pill i { color: #fbbf24; }
+    .staff-badge i { color: #f97316; }
     .logout-btn {
-        display: flex; align-items: center; gap-6px;
-        background: rgba(239,68,68,0.85);
-        border: 1px solid rgba(255,255,255,0.2);
-        color: white; border-radius: 999px;
-        padding: 7px 16px; font-size: 12px; font-weight: 800;
-        cursor: pointer; gap: 6px;
-        transition: all .2s;
-        box-shadow: 0 4px 14px rgba(239,68,68,0.35);
+        display: flex; align-items: center; gap: 7px;
+        background: rgba(239,68,68,0.15);
+        border: 1px solid rgba(239,68,68,0.35);
+        color: #f87171; border-radius: 99px;
+        padding: 7px 18px; font-size: 12px; font-weight: 800;
+        cursor: pointer; transition: all .2s;
     }
-    .logout-btn:hover { background: #dc2626; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(239,68,68,0.45); }
+    .logout-btn:hover { background: #ef4444; color: white; border-color: #ef4444; box-shadow: 0 4px 16px rgba(239,68,68,0.4); }
 
-    /* ── Tab nav ────────────────────────────────────────────── */
+    /* ── Tab nav ─────────────────────────────────────────────── */
     .tab-nav-wrap {
-        position: relative;   /* NOT sticky — removes overlap */
-        z-index: 10;
-        padding: 12px 32px 0;
-    }
-    .tab-nav {
-        display: inline-flex; gap: 4px; padding: 6px;
-        border-radius: 14px; margin: 0 0 4px;
+        background: #1e293b;
+        border-bottom: 1px solid rgba(255,255,255,0.07);
+        padding: 0 32px;
+        display: flex; gap: 4px;
     }
     .tab-btn {
-        padding: 9px 22px; border-radius: 10px; border: none;
-        background: transparent; cursor: pointer;
-        font-size: 13px; font-weight: 700; color: rgba(30,41,59,0.6);
-        transition: all .2s; display: flex; align-items: center; gap: 6px;
+        padding: 14px 22px; border: none; background: transparent;
+        font-size: 13px; font-weight: 700; cursor: pointer;
+        color: #64748b; border-bottom: 3px solid transparent;
+        transition: all .2s; display: flex; align-items: center; gap: 7px;
+        margin-bottom: -1px;
     }
-    .tab-btn.active {
-        background: linear-gradient(135deg, #f97316, #fb923c);
-        color: white;
-        box-shadow: 0 4px 14px rgba(249,115,22,0.40);
+    .tab-btn.active { color: #f97316; border-bottom-color: #f97316; }
+    .tab-btn:hover:not(.active) { color: #cbd5e1; }
+    .tab-btn .tab-badge {
+        background: #f97316; color: white;
+        font-size: 10px; font-weight: 900;
+        padding: 1px 7px; border-radius: 99px; min-width: 20px; text-align: center;
     }
-    .tab-btn:not(.active):hover { background: rgba(255,255,255,0.5); color: #0f172a; }
 
-    /* ── Content wrapper ────────────────────────────────────── */
+    /* ── Tab panels ──────────────────────────────────────────── */
     .tab-panel { display: none; }
     .tab-panel.active { display: block; }
-    .container {
-        max-width: 1160px; margin: 0 auto;
-        padding: 16px 24px 40px;   /* no extra top padding needed — tab nav is in flow */
-        position: relative; z-index: 1;
+    .container { max-width: 1200px; margin: 0 auto; padding: 28px 28px 60px; }
+
+    /* ── Stats grid ──────────────────────────────────────────── */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px; margin-bottom: 28px;
     }
-
-
-    /* ── Stats row ──────────────────────────────────────────── */
-    .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px,1fr)); gap: 14px; margin-bottom: 24px; }
     .stat-card {
-        padding: 20px 22px; border-radius: 20px; text-align: center;
+        background: #1e293b;
+        border: 1px solid rgba(255,255,255,0.07);
+        border-radius: 18px; padding: 20px 22px;
         position: relative; overflow: hidden;
-        transition: transform .25s, box-shadow .25s;
+        transition: transform .2s, box-shadow .2s;
+        cursor: default;
     }
-    .stat-card::before {
+    .stat-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,0.3); }
+    .stat-card::after {
         content: '';
-        position: absolute; top: -30%; left: -30%;
-        width: 80%; height: 80%;
-        background: radial-gradient(circle, rgba(255,255,255,0.6), transparent 70%);
-        pointer-events: none;
+        position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+        border-radius: 0 0 18px 18px;
     }
-    .stat-card:hover { transform: translateY(-4px) scale(1.02); }
-    .stat-icon { font-size: 22px; margin-bottom: 8px; }
-    .stat-val {
-        font-size: 34px; font-weight: 900; line-height: 1;
-        background: linear-gradient(135deg, #0f172a, #1e293b);
-        -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+    .stat-card.c-orange::after { background: linear-gradient(90deg,#f97316,#fb923c); }
+    .stat-card.c-yellow::after { background: linear-gradient(90deg,#f59e0b,#fbbf24); }
+    .stat-card.c-blue::after   { background: linear-gradient(90deg,#3b82f6,#6366f1); }
+    .stat-card.c-green::after  { background: linear-gradient(90deg,#22c55e,#16a34a); }
+    .stat-card.c-slate::after  { background: linear-gradient(90deg,#64748b,#94a3b8); }
+
+    .stat-icon { font-size: 26px; margin-bottom: 10px; display: block; }
+    .stat-val { font-size: 34px; font-weight: 900; color: #f1f5f9; line-height: 1; }
+    .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-top: 5px; }
+
+    /* ── Section header ──────────────────────────────────────── */
+    .section-head {
+        display: flex; align-items: center; justify-content: space-between;
+        margin-bottom: 16px;
     }
-    .stat-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #64748b; margin-top: 4px; }
-    .stat-accent { position: absolute; bottom: 0; left: 0; right: 0; height: 3px; border-radius: 0 0 20px 20px; }
-
-    /* ── Section title ──────────────────────────────────────── */
-    .section-title { font-size: 18px; font-weight: 900; color: #0f172a; display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
-    .section-title .pill { background: linear-gradient(135deg,#f97316,#fb923c); color: white; font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 700; }
-
-    /* ── Refresh button ─────────────────────────────────────── */
+    .section-title { font-size: 18px; font-weight: 900; color: #f1f5f9; display: flex; align-items: center; gap: 10px; }
+    .count-pill {
+        background: rgba(249,115,22,0.15); color: #fb923c;
+        border: 1px solid rgba(249,115,22,0.3);
+        font-size: 11px; font-weight: 800;
+        padding: 3px 10px; border-radius: 99px;
+    }
     .refresh-btn {
-        display: inline-flex; align-items: center; gap: 8px;
-        background: rgba(15,23,42,0.80);
-        border: 1px solid rgba(255,255,255,0.15);
-        color: white; border-radius: 12px;
-        padding: 9px 18px; font-size: 12px; font-weight: 800;
-        cursor: pointer; margin-bottom: 16px;
-        transition: all .2s;
-        box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+        display: flex; align-items: center; gap: 7px;
+        background: rgba(249,115,22,0.12);
+        border: 1px solid rgba(249,115,22,0.3);
+        color: #fb923c; border-radius: 10px;
+        padding: 8px 16px; font-size: 12px; font-weight: 800;
+        cursor: pointer; transition: all .2s;
     }
-    .refresh-btn:hover { background: rgba(249,115,22,0.85); transform: translateY(-1px); box-shadow: 0 6px 20px rgba(249,115,22,0.35); }
+    .refresh-btn:hover { background: #f97316; color: white; border-color: #f97316; box-shadow: 0 4px 16px rgba(249,115,22,0.35); }
     .refresh-btn i { transition: transform .4s; }
     .refresh-btn:hover i { transform: rotate(180deg); }
 
-    /* ── Glass Table ────────────────────────────────────────── */
-    .table-wrap {
-        border-radius: 20px; overflow: hidden;
-        box-shadow: 0 8px 32px rgba(249,115,22,0.10), 0 2px 8px rgba(0,0,0,0.06);
-    }
+    /* ── Dark table ──────────────────────────────────────────── */
+    .table-wrap { background: #1e293b; border: 1px solid rgba(255,255,255,0.07); border-radius: 20px; overflow: hidden; }
     table { width: 100%; border-collapse: collapse; }
     thead th {
-        background: rgba(15,23,42,0.88);
-        color: rgba(255,255,255,0.85);
-        padding: 13px 16px;
-        font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
-        backdrop-filter: blur(10px);
+        background: #0f172a;
+        color: #64748b;
+        padding: 13px 18px;
+        font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px;
+        text-align: left;
     }
     tbody tr {
-        background: rgba(255,255,255,0.52);
-        backdrop-filter: blur(14px);
-        border-bottom: 1px solid rgba(255,255,255,0.6);
-        transition: background .2s, transform .15s;
+        border-bottom: 1px solid rgba(255,255,255,0.05);
+        transition: background .15s;
     }
     tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: rgba(255,255,255,0.80); transform: scale(1.002); }
-    td { padding: 13px 16px; font-size: 13px; font-weight: 600; color: #1e293b; vertical-align: middle; }
+    tbody tr:hover { background: rgba(255,255,255,0.04); }
+    td { padding: 14px 18px; font-size: 13px; font-weight: 600; color: #cbd5e1; vertical-align: middle; }
 
-    /* ── Status badges ──────────────────────────────────────── */
+    /* ── Status badges ───────────────────────────────────────── */
     .badge {
-        display: inline-flex; align-items: center; gap: 5px;
-        padding: 5px 11px; border-radius: 999px;
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 5px 12px; border-radius: 99px;
         font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .5px;
-        border: 1px solid transparent;
     }
-    .badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; animation: pulse 1.5s infinite; }
-    .badge-PENDING          { background: rgba(251,191, 36,0.18); color: #92400e; border-color: rgba(251,191,36,0.4); }
-    .badge-PENDING::before  { background: #f59e0b; }
-    .badge-PREPARING        { background: rgba( 59,130,246,0.15); color: #1e40af; border-color: rgba(59,130,246,0.4); }
-    .badge-PREPARING::before{ background: #3b82f6; }
-    .badge-READY_FOR_PICKUP { background: rgba( 34,197, 94,0.15); color: #166534; border-color: rgba(34,197,94,0.4); }
-    .badge-READY_FOR_PICKUP::before { background: #22c55e; }
-    .badge-COMPLETED        { background: rgba(148,163,184,0.18); color: #475569; border-color: rgba(148,163,184,0.4); }
-    .badge-COMPLETED::before{ background: #94a3b8; animation: none; }
+    .badge::before { content:''; width:6px; height:6px; border-radius:50%; animation: blink 1.6s infinite; }
+    .badge-PENDING           { background:rgba(245,158, 11,.12); color:#fbbf24; border:1px solid rgba(245,158,11,.3); }
+    .badge-PENDING::before   { background:#f59e0b; }
+    .badge-PREPARING         { background:rgba( 59,130,246,.12); color:#93c5fd; border:1px solid rgba(59,130,246,.3); }
+    .badge-PREPARING::before { background:#3b82f6; }
+    .badge-READY_FOR_PICKUP  { background:rgba( 34,197, 94,.12); color:#86efac; border:1px solid rgba(34,197,94,.3); }
+    .badge-READY_FOR_PICKUP::before { background:#22c55e; }
+    .badge-COMPLETED         { background:rgba(100,116,139,.12); color:#94a3b8; border:1px solid rgba(100,116,139,.25); }
+    .badge-COMPLETED::before { background:#64748b; animation:none; }
+    @keyframes blink { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.5)} }
 
-    @keyframes pulse {
-        0%, 100% { opacity: 1; transform: scale(1); }
-        50%       { opacity: .5; transform: scale(1.4); }
-    }
-
-    /* ── Action buttons ─────────────────────────────────────── */
+    /* ── Action buttons ──────────────────────────────────────── */
     .action-btn {
         display: inline-flex; align-items: center; gap: 5px;
-        border: none; padding: 7px 14px; border-radius: 10px;
+        border: none; padding: 7px 14px; border-radius: 8px;
         cursor: pointer; font-size: 11px; font-weight: 800;
-        transition: all .2s; letter-spacing: .3px;
+        transition: all .2s;
     }
-    .action-btn:hover:not(:disabled) { transform: translateY(-1px); }
-    .btn-preparing { background: linear-gradient(135deg,#3b82f6,#6366f1); color: white; box-shadow: 0 4px 12px rgba(99,102,241,.35); }
-    .btn-preparing:hover { box-shadow: 0 6px 18px rgba(99,102,241,.50); }
-    .btn-ready     { background: linear-gradient(135deg,#22c55e,#16a34a); color: white; box-shadow: 0 4px 12px rgba(34,197, 94,.35); }
-    .btn-ready:hover     { box-shadow: 0 6px 18px rgba(34,197, 94,.50); }
-    .btn-complete  { background: linear-gradient(135deg,#f97316,#ea580c); color: white; box-shadow: 0 4px 12px rgba(249,115,22,.35); }
-    .btn-complete:hover  { box-shadow: 0 6px 18px rgba(249,115,22,.50); }
-    .btn-done      { background: rgba(148,163,184,.2); color: #94a3b8; cursor: default; border: 1px solid rgba(148,163,184,.3); }
+    .action-btn:hover:not([disabled]) { transform: translateY(-1px); }
+    .btn-preparing { background:rgba(99,102,241,.18); color:#a5b4fc; border:1px solid rgba(99,102,241,.35); }
+    .btn-preparing:hover { background:#6366f1; color:white; box-shadow:0 4px 16px rgba(99,102,241,.45); }
+    .btn-ready     { background:rgba(34,197, 94,.18); color:#86efac; border:1px solid rgba(34,197,94,.35); }
+    .btn-ready:hover     { background:#22c55e; color:white; box-shadow:0 4px 16px rgba(34,197,94,.45); }
+    .btn-complete  { background:rgba(249,115, 22,.18); color:#fb923c; border:1px solid rgba(249,115,22,.35); }
+    .btn-complete:hover  { background:#f97316; color:white; box-shadow:0 4px 16px rgba(249,115,22,.45); }
+    .btn-done      { background:rgba(100,116,139,.12); color:#475569; border:1px solid rgba(100,116,139,.2); cursor:default; }
 
-    /* ── Empty state ────────────────────────────────────────── */
-    .empty-state { text-align: center; padding: 50px 20px; }
-    .empty-state .empty-icon { font-size: 48px; margin-bottom: 12px; }
-    .empty-state p { font-size: 14px; color: #64748b; font-weight: 600; }
+    /* ── Empty state ─────────────────────────────────────────── */
+    .empty-state { text-align:center; padding:50px 20px; }
+    .empty-state .empty-icon { font-size:44px; margin-bottom:12px; }
+    .empty-state p { font-size:14px; color:#475569; font-weight:600; }
 
-    /* ── Analytics ──────────────────────────────────────────── */
-    .analytics-kpis { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 14px; margin-bottom: 24px; }
+    /* ── Analytics KPIs ──────────────────────────────────────── */
+    .kpi-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(190px,1fr)); gap:14px; margin-bottom:24px; }
     .kpi-card {
-        padding: 20px 22px; border-radius: 20px;
-        display: flex; align-items: center; gap: 14px;
-        transition: transform .25s;
+        background:#1e293b; border:1px solid rgba(255,255,255,0.07);
+        border-radius:18px; padding:20px 22px;
+        display:flex; align-items:center; gap:16px;
+        transition: transform .2s, box-shadow .2s;
     }
-    .kpi-card:hover { transform: translateY(-4px); }
-    .kpi-icon {
-        width: 48px; height: 48px; border-radius: 14px;
-        display: flex; align-items: center; justify-content: center;
-        font-size: 22px; flex-shrink: 0;
+    .kpi-card:hover { transform:translateY(-3px); box-shadow:0 8px 32px rgba(0,0,0,0.3); }
+    .kpi-icon { width:48px; height:48px; border-radius:14px; display:flex; align-items:center; justify-content:center; font-size:22px; flex-shrink:0; }
+    .kpi-val { font-size:26px; font-weight:900; color:#f1f5f9; line-height:1; }
+    .kpi-lbl { font-size:10px; font-weight:700; text-transform:uppercase; letter-spacing:.8px; color:#64748b; margin-top:4px; }
+
+    /* ── Charts grid ─────────────────────────────────────────── */
+    .charts-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(430px,1fr)); gap:18px; margin-bottom:20px; }
+    .chart-card {
+        background:#1e293b; border:1px solid rgba(255,255,255,0.07);
+        border-radius:18px; padding:22px;
     }
-    .kpi-val { font-size: 26px; font-weight: 900; color: #0f172a; line-height: 1; }
-    .kpi-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .8px; color: #64748b; margin-top: 3px; }
+    .chart-title { font-size:14px; font-weight:800; color:#f1f5f9; margin-bottom:18px; display:flex; align-items:center; gap:8px; }
 
-    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(430px,1fr)); gap: 18px; margin-bottom: 22px; }
-    .chart-card  { padding: 22px; border-radius: 20px; }
-    .chart-title { font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
-    .chart-title .ct-icon { font-size: 18px; }
-    canvas { max-height: 250px; }
+    /* ── Top items ───────────────────────────────────────────── */
+    .top-card { background:#1e293b; border:1px solid rgba(255,255,255,0.07); border-radius:18px; overflow:hidden; }
+    .top-card-hdr { padding:18px 22px; font-size:15px; font-weight:900; color:#f1f5f9; border-bottom:1px solid rgba(255,255,255,0.06); }
+    .top-item { display:flex; align-items:center; gap:14px; padding:14px 22px; border-bottom:1px solid rgba(255,255,255,0.05); transition:background .15s; }
+    .top-item:last-child { border-bottom:none; }
+    .top-item:hover { background:rgba(255,255,255,0.03); }
+    .rank { width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:900; flex-shrink:0; }
+    .r1 { background:rgba(251,191,36,.18); } .r2 { background:rgba(148,163,184,.12); } .r3 { background:rgba(249,115,22,.18); }
+    .item-info { flex:1; }
+    .item-name { font-size:13px; font-weight:800; color:#e2e8f0; margin-bottom:5px; }
+    .bar-bg { height:5px; background:rgba(255,255,255,0.07); border-radius:99px; overflow:hidden; }
+    .bar-fill { height:100%; background:linear-gradient(90deg,#f97316,#fbbf24); border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+    .item-qty { font-size:13px; font-weight:900; color:#f97316; flex-shrink:0; }
 
-    /* ── Top items ──────────────────────────────────────────── */
-    .top-items-card { border-radius: 20px; overflow: hidden; }
-    .top-items-header { padding: 18px 22px; font-size: 15px; font-weight: 800; color: #0f172a; border-bottom: 1px solid rgba(255,255,255,0.6); display: flex; align-items: center; gap: 8px; }
-    .top-item-row { display: flex; align-items: center; gap: 14px; padding: 13px 22px; border-bottom: 1px solid rgba(255,255,255,0.5); transition: background .2s; }
-    .top-item-row:last-child { border-bottom: none; }
-    .top-item-row:hover { background: rgba(255,255,255,0.4); }
-    .rank { width: 30px; height: 30px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 900; flex-shrink: 0; }
-    .rank-1 { background: linear-gradient(135deg,#fbbf24,#f59e0b); color: white; box-shadow: 0 3px 10px rgba(251,191,36,.4); }
-    .rank-2 { background: linear-gradient(135deg,#cbd5e1,#94a3b8); color: white; }
-    .rank-3 { background: linear-gradient(135deg,#fb923c,#f97316); color: white; box-shadow: 0 3px 10px rgba(249,115,22,.35); }
-    .rank-n { background: rgba(241,245,249,0.8); color: #64748b; }
-    .item-info { flex: 1; }
-    .item-name { font-size: 13px; font-weight: 800; color: #0f172a; margin-bottom: 5px; }
-    .item-bar-bg { height: 6px; background: rgba(0,0,0,0.07); border-radius: 99px; overflow: hidden; }
-    .item-bar-fill { height: 100%; background: linear-gradient(90deg,#f97316,#fbbf24); border-radius: 99px; transition: width .8s cubic-bezier(.4,0,.2,1); }
-    .item-count { font-size: 13px; font-weight: 900; color: #f97316; flex-shrink: 0; }
+    /* ── Scrollbar ───────────────────────────────────────────── */
+    ::-webkit-scrollbar { width:5px; }
+    ::-webkit-scrollbar-track { background:#0f172a; }
+    ::-webkit-scrollbar-thumb { background:#334155; border-radius:99px; }
 
-    /* ── Toast ──────────────────────────────────────────────── */
-    #toastWrap { position: fixed; bottom: 24px; right: 24px; z-index: 999; display: flex; flex-direction: column; gap: 10px; }
+    /* ── Toast ───────────────────────────────────────────────── */
+    #toastWrap { position:fixed; bottom:24px; right:24px; z-index:999; display:flex; flex-direction:column; gap:10px; }
     .toast {
-        display: flex; align-items: center; gap: 10px;
-        padding: 12px 18px; border-radius: 14px;
-        font-size: 13px; font-weight: 700; color: #0f172a;
+        display:flex; align-items:center; gap:10px;
+        padding:12px 18px; border-radius:14px;
+        background:#1e293b; border:1px solid rgba(249,115,22,0.3);
+        font-size:13px; font-weight:700; color:#f1f5f9;
+        min-width:260px; box-shadow:0 8px 32px rgba(0,0,0,.4);
         animation: slideUp .3s ease;
-        min-width: 260px;
     }
-    @keyframes slideUp { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes slideUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
 
-    /* ── Scrollbar ──────────────────────────────────────────── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(249,115,22,0.3); border-radius: 99px; }
-
-    /* ── Page enter animation ───────────────────────────────── */
-    @keyframes fadeSlide { from { opacity:0; transform:translateY(18px); } to { opacity:1; transform:translateY(0); } }
-    .anim { animation: fadeSlide .5s ease both; }
-    .anim-d1 { animation-delay: .05s; }
-    .anim-d2 { animation-delay: .10s; }
-    .anim-d3 { animation-delay: .15s; }
-    .anim-d4 { animation-delay: .20s; }
-    .anim-d5 { animation-delay: .25s; }
+    /* ── Page fade in ────────────────────────────────────────── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+    .anim  { animation:fadeUp .45s ease both; }
+    .d1 { animation-delay:.04s; } .d2 { animation-delay:.08s; }
+    .d3 { animation-delay:.12s; } .d4 { animation-delay:.16s; }
+    .d5 { animation-delay:.20s; }
     </style>
 </head>
 <body>
 
-<!-- ── Header ──────────────────────────────────────────────── -->
-<header class="glass-dark">
+<!-- ── Header ─────────────────────────────────────────────── -->
+<header>
     <div class="brand">
         <i class="fas fa-utensils" style="color:#f97316;margin-right:8px;"></i>Campus<span>Bite</span>
         <small>Staff Portal</small>
     </div>
-    <div class="staff-info">
-        <div class="staff-pill">
-            <i class="fas fa-user-shield"></i>
-            <span id="staffName">Staff</span>
-        </div>
-        <button class="logout-btn" onclick="logout()">
-            <i class="fas fa-sign-out-alt"></i> Logout
-        </button>
+    <div class="header-right">
+        <div class="staff-badge"><i class="fas fa-user-shield"></i><span id="staffName">Staff</span></div>
+        <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
 </header>
 
-<!-- ── Tab Navigation ──────────────────────────────────────── -->
-<div class="tab-nav-wrap" style="position:relative;z-index:90;">
-    <div class="tab-nav glass anim">
-        <button class="tab-btn active" id="tbtn-orders" onclick="switchTab('orders',this)">
-            <i class="fas fa-receipt"></i> Live Orders
-        </button>
-        <button class="tab-btn" id="tbtn-analytics" onclick="switchTab('analytics',this)">
-            <i class="fas fa-chart-bar"></i> Analytics
-        </button>
-    </div>
+<!-- ── Tab Nav ────────────────────────────────────────────── -->
+<div class="tab-nav-wrap">
+    <button class="tab-btn active" id="tbtn-orders" onclick="switchTab('orders',this)">
+        <i class="fas fa-receipt"></i> Live Orders
+        <span class="tab-badge" id="tabBadge">0</span>
+    </button>
+    <button class="tab-btn" id="tbtn-analytics" onclick="switchTab('analytics',this)">
+        <i class="fas fa-chart-bar"></i> Analytics
+    </button>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     TAB 1 — LIVE ORDERS
-══════════════════════════════════════════════════════════ -->
+<!-- ════════════════ TAB 1 — LIVE ORDERS ════════════════ -->
 <div id="tab-orders" class="tab-panel active">
-<div class="container" style="padding-top:16px;">
+<div class="container">
 
-    <!-- Stats -->
-    <div class="stats-row">
-        <div class="glass-card stat-card anim anim-d1">
-            <div class="stat-icon">📋</div>
+    <div class="stats-grid">
+        <div class="stat-card c-orange anim d1">
+            <span class="stat-icon">📋</span>
             <div class="stat-val" id="statTotal">0</div>
             <div class="stat-label">Total Orders</div>
-            <div class="stat-accent" style="background:linear-gradient(90deg,#f97316,#fb923c)"></div>
         </div>
-        <div class="glass-card stat-card anim anim-d2">
-            <div class="stat-icon">⏳</div>
+        <div class="stat-card c-yellow anim d2">
+            <span class="stat-icon">⏳</span>
             <div class="stat-val" id="statPending">0</div>
             <div class="stat-label">Pending</div>
-            <div class="stat-accent" style="background:linear-gradient(90deg,#f59e0b,#fbbf24)"></div>
         </div>
-        <div class="glass-card stat-card anim anim-d3">
-            <div class="stat-icon">👨‍🍳</div>
+        <div class="stat-card c-blue anim d3">
+            <span class="stat-icon">👨‍🍳</span>
             <div class="stat-val" id="statPreparing">0</div>
             <div class="stat-label">Preparing</div>
-            <div class="stat-accent" style="background:linear-gradient(90deg,#3b82f6,#6366f1)"></div>
         </div>
-        <div class="glass-card stat-card anim anim-d4">
-            <div class="stat-icon">✅</div>
+        <div class="stat-card c-green anim d4">
+            <span class="stat-icon">✅</span>
             <div class="stat-val" id="statReady">0</div>
             <div class="stat-label">Ready for Pickup</div>
-            <div class="stat-accent" style="background:linear-gradient(90deg,#22c55e,#16a34a)"></div>
         </div>
-        <div class="glass-card stat-card anim anim-d5">
-            <div class="stat-icon">🎉</div>
+        <div class="stat-card c-slate anim d5">
+            <span class="stat-icon">🎉</span>
             <div class="stat-val" id="statDone">0</div>
             <div class="stat-label">Completed</div>
-            <div class="stat-accent" style="background:linear-gradient(90deg,#94a3b8,#64748b)"></div>
         </div>
     </div>
 
-    <!-- Orders table -->
-    <div class="section-title anim anim-d2">
-        <i class="fas fa-list-ul" style="color:#f97316"></i>
-        Incoming Pre-Orders
-        <span class="pill" id="orderCountPill">0 orders</span>
+    <div class="section-head anim d2">
+        <div class="section-title">
+            <i class="fas fa-list-ul" style="color:#f97316;"></i>
+            Incoming Pre-Orders
+            <span class="count-pill" id="orderCountPill">0 orders</span>
+        </div>
+        <button class="refresh-btn" onclick="loadOrders()">
+            <i class="fas fa-sync-alt"></i> Refresh
+        </button>
     </div>
 
-    <button class="refresh-btn anim anim-d2" onclick="loadOrders()">
-        <i class="fas fa-sync-alt"></i> Refresh Orders
-    </button>
-
-    <div class="table-wrap anim anim-d3">
+    <div class="table-wrap anim d3">
         <table>
             <thead>
                 <tr>
@@ -404,12 +332,7 @@
                 </tr>
             </thead>
             <tbody id="ordersTable">
-                <tr><td colspan="9">
-                    <div class="empty-state">
-                        <div class="empty-icon">⏳</div>
-                        <p>Loading orders…</p>
-                    </div>
-                </td></tr>
+                <tr><td colspan="9"><div class="empty-state"><div class="empty-icon">⏳</div><p>Loading orders…</p></div></td></tr>
             </tbody>
         </table>
     </div>
@@ -417,73 +340,62 @@
 </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════════
-     TAB 2 — ANALYTICS
-══════════════════════════════════════════════════════════ -->
+<!-- ════════════════ TAB 2 — ANALYTICS ════════════════ -->
 <div id="tab-analytics" class="tab-panel">
-<div class="container" style="padding-top:16px;">
+<div class="container">
 
-    <!-- KPI cards -->
-    <div class="analytics-kpis">
-        <div class="glass-card kpi-card anim anim-d1">
-            <div class="kpi-icon" style="background:rgba(249,115,22,.15);color:#f97316"><i class="fas fa-shopping-bag"></i></div>
+    <div class="kpi-grid">
+        <div class="kpi-card anim d1">
+            <div class="kpi-icon" style="background:rgba(249,115,22,.15);color:#f97316;"><i class="fas fa-shopping-bag"></i></div>
             <div><div class="kpi-val" id="aTotal">0</div><div class="kpi-lbl">Total Orders</div></div>
         </div>
-        <div class="glass-card kpi-card anim anim-d2">
-            <div class="kpi-icon" style="background:rgba(34,197,94,.15);color:#16a34a"><i class="fas fa-rupee-sign"></i></div>
+        <div class="kpi-card anim d2">
+            <div class="kpi-icon" style="background:rgba(34,197,94,.15);color:#22c55e;"><i class="fas fa-rupee-sign"></i></div>
             <div><div class="kpi-val" id="aRevenue">₹0</div><div class="kpi-lbl">Total Revenue</div></div>
         </div>
-        <div class="glass-card kpi-card anim anim-d3">
-            <div class="kpi-icon" style="background:rgba(59,130,246,.15);color:#3b82f6"><i class="fas fa-chart-line"></i></div>
+        <div class="kpi-card anim d3">
+            <div class="kpi-icon" style="background:rgba(59,130,246,.15);color:#3b82f6;"><i class="fas fa-chart-line"></i></div>
             <div><div class="kpi-val" id="aAvgOrder">₹0</div><div class="kpi-lbl">Avg Order Value</div></div>
         </div>
-        <div class="glass-card kpi-card anim anim-d4">
-            <div class="kpi-icon" style="background:rgba(139,92,246,.15);color:#8b5cf6"><i class="fas fa-boxes"></i></div>
+        <div class="kpi-card anim d4">
+            <div class="kpi-icon" style="background:rgba(139,92,246,.15);color:#8b5cf6;"><i class="fas fa-boxes"></i></div>
             <div><div class="kpi-val" id="aItemsSold">0</div><div class="kpi-lbl">Items Sold</div></div>
         </div>
-        <div class="glass-card kpi-card anim anim-d5">
-            <div class="kpi-icon" style="background:rgba(14,165,233,.15);color:#0ea5e9"><i class="fas fa-check-double"></i></div>
+        <div class="kpi-card anim d5">
+            <div class="kpi-icon" style="background:rgba(14,165,233,.15);color:#0ea5e9;"><i class="fas fa-check-double"></i></div>
             <div><div class="kpi-val" id="aRate">0%</div><div class="kpi-lbl">Completion Rate</div></div>
         </div>
     </div>
 
-    <!-- Charts 2×2 grid -->
     <div class="charts-grid">
-        <div class="glass-card chart-card anim anim-d2">
-            <div class="chart-title"><span class="ct-icon">⏰</span> Peak Ordering Hours</div>
+        <div class="chart-card anim d2">
+            <div class="chart-title"><span>⏰</span> Peak Ordering Hours</div>
             <canvas id="peakChart"></canvas>
         </div>
-        <div class="glass-card chart-card anim anim-d3">
-            <div class="chart-title"><span class="ct-icon">📦</span> Order Status Breakdown</div>
+        <div class="chart-card anim d3">
+            <div class="chart-title"><span>📦</span> Order Status Breakdown</div>
             <canvas id="statusChart"></canvas>
         </div>
-        <div class="glass-card chart-card anim anim-d4">
-            <div class="chart-title"><span class="ct-icon">💰</span> Revenue — Last 7 Days</div>
+        <div class="chart-card anim d4">
+            <div class="chart-title"><span>💰</span> Revenue — Last 7 Days</div>
             <canvas id="revenueChart"></canvas>
         </div>
-        <div class="glass-card chart-card anim anim-d5">
-            <div class="chart-title"><span class="ct-icon">💳</span> Payment Methods</div>
+        <div class="chart-card anim d5">
+            <div class="chart-title"><span>💳</span> Payment Methods</div>
             <canvas id="payChart"></canvas>
         </div>
     </div>
 
-    <!-- Top selling items -->
-    <div class="glass-card top-items-card anim anim-d3">
-        <div class="top-items-header">
-            🏆 Top Selling Items
-        </div>
-        <div id="topItemsList">
-            <div class="empty-state"><div class="empty-icon">🍽️</div><p>No order data yet.</p></div>
-        </div>
+    <div class="top-card anim d3">
+        <div class="top-card-hdr">🏆 Top Selling Items</div>
+        <div id="topItemsList"><div class="empty-state"><div class="empty-icon">🍽️</div><p>No order data yet.</p></div></div>
     </div>
 
 </div>
 </div>
 
-<!-- Toast container -->
 <div id="toastWrap"></div>
 
-<!-- ── Scripts ─────────────────────────────────────────────── -->
 <script src="js/auth.js"></script>
 <script src="js/notifications.js"></script>
 <script>
@@ -493,15 +405,12 @@ const staffUser = requireAuth('CANTEEN_STAFF');
 if (staffUser) document.getElementById('staffName').textContent = staffUser.name;
 
 // ── Toast ─────────────────────────────────────────────────────
-function showAdminToast(msg, type='success') {
-    const colors = { success:'rgba(220,252,231,0.9)', error:'rgba(254,226,226,0.9)', info:'rgba(219,234,254,0.9)' };
-    const icons  = { success:'✅', error:'❌', info:'ℹ️' };
+function showAdminToast(msg) {
     const t = document.createElement('div');
-    t.className = 'toast glass';
-    t.innerHTML = `<span>${icons[type]}</span><span>${msg}</span>`;
-    t.style.background = colors[type];
+    t.className = 'toast';
+    t.innerHTML = `<span style="color:#f97316;font-size:16px;">🔔</span><span>${msg}</span>`;
     document.getElementById('toastWrap').appendChild(t);
-    setTimeout(() => { t.style.opacity='0'; t.style.transform='translateY(10px)'; t.style.transition='.3s'; setTimeout(()=>t.remove(),300); }, 3500);
+    setTimeout(() => { t.style.opacity='0'; t.style.transition='.3s'; setTimeout(()=>t.remove(),300); }, 3500);
 }
 
 // ── Tabs ──────────────────────────────────────────────────────
@@ -513,19 +422,19 @@ function switchTab(name, btn) {
     if (name === 'analytics') buildAnalytics();
 }
 
-// ── Order data ────────────────────────────────────────────────
-const STATUS_FLOW  = { PENDING:'PREPARING', PREPARING:'READY_FOR_PICKUP', READY_FOR_PICKUP:'COMPLETED', COMPLETED:null };
-const BTN_LABEL    = { PENDING:'▶ Prepare', PREPARING:'✅ Mark Ready', READY_FOR_PICKUP:'✓ Complete', COMPLETED:'Done' };
-const BTN_CLASS    = { PENDING:'btn-preparing', PREPARING:'btn-ready', READY_FOR_PICKUP:'btn-complete', COMPLETED:'btn-done' };
+// ── Orders ────────────────────────────────────────────────────
+const FLOW  = { PENDING:'PREPARING', PREPARING:'READY_FOR_PICKUP', READY_FOR_PICKUP:'COMPLETED', COMPLETED:null };
+const BLBL  = { PENDING:'▶ Prepare', PREPARING:'✅ Mark Ready', READY_FOR_PICKUP:'✓ Complete', COMPLETED:'Done' };
+const BCLS  = { PENDING:'btn-preparing', PREPARING:'btn-ready', READY_FOR_PICKUP:'btn-complete', COMPLETED:'btn-done' };
 
-function getOrders()        { return JSON.parse(localStorage.getItem('canteen_orders') || '[]'); }
-function saveOrders(orders) { localStorage.setItem('canteen_orders', JSON.stringify(orders)); }
+const getOrders  = () => JSON.parse(localStorage.getItem('canteen_orders') || '[]');
+const saveOrders = (o) => localStorage.setItem('canteen_orders', JSON.stringify(o));
 
 function advanceStatus(orderId) {
     const orders = getOrders();
     const order  = orders.find(o => o.orderId === orderId);
     if (!order) return;
-    const next = STATUS_FLOW[order.status];
+    const next = FLOW[order.status];
     if (!next) return;
     order.status = next;
     saveOrders(orders);
@@ -534,125 +443,126 @@ function advanceStatus(orderId) {
     loadOrders();
 }
 
+function animCount(id, val) {
+    const el = document.getElementById(id); if (!el) return;
+    const start = parseInt(el.textContent)||0, dur=500, step=(val-start)/(dur/16);
+    let cur=start;
+    const t=setInterval(()=>{ cur+=step; if((step>0&&cur>=val)||(step<=0&&cur<=val)){el.textContent=val;clearInterval(t);}else el.textContent=Math.round(cur);},16);
+}
+
 function loadOrders() {
     const orders = getOrders().slice().reverse();
     const tbody  = document.getElementById('ordersTable');
 
-    // Animate counters
-    animateCount('statTotal',    orders.length);
-    animateCount('statPending',  orders.filter(o=>o.status==='PENDING').length);
-    animateCount('statPreparing',orders.filter(o=>o.status==='PREPARING').length);
-    animateCount('statReady',    orders.filter(o=>o.status==='READY_FOR_PICKUP').length);
-    animateCount('statDone',     orders.filter(o=>o.status==='COMPLETED').length);
+    animCount('statTotal',    orders.length);
+    animCount('statPending',  orders.filter(o=>o.status==='PENDING').length);
+    animCount('statPreparing',orders.filter(o=>o.status==='PREPARING').length);
+    animCount('statReady',    orders.filter(o=>o.status==='READY_FOR_PICKUP').length);
+    animCount('statDone',     orders.filter(o=>o.status==='COMPLETED').length);
+
+    const pending = orders.filter(o=>o.status==='PENDING').length;
+    document.getElementById('tabBadge').textContent       = orders.length;
     document.getElementById('orderCountPill').textContent = `${orders.length} order${orders.length!==1?'s':''}`;
 
-    if (orders.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">🍽️</div><p>No orders yet — students haven't placed any orders.</p></div></td></tr>`;
+    if (!orders.length) {
+        tbody.innerHTML = `<tr><td colspan="9"><div class="empty-state"><div class="empty-icon">🍽️</div><p>No orders yet — waiting for students to order.</p></div></td></tr>`;
         return;
     }
 
     tbody.innerHTML = orders.map(o => {
-        const token  = String(o.orderId).slice(-4);
-        const items  = o.items.map(i=>`${i.name} ×${i.quantity}`).join(', ');
-        const time   = new Date(o.createdAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
-        const next   = STATUS_FLOW[o.status];
+        const token = String(o.orderId).slice(-4);
+        const items = o.items.map(i=>`${i.name} ×${i.quantity}`).join(', ');
+        const time  = new Date(o.createdAt).toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'});
+        const next  = FLOW[o.status];
         return `<tr>
             <td><strong style="color:#f97316;font-size:15px;">#${token}</strong></td>
-            <td><span style="font-weight:800;">${o.userName||'—'}</span></td>
-            <td style="max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#64748b;" title="${items}">${items}</td>
-            <td><strong>₹${o.totalAmount}</strong></td>
-            <td><span style="background:rgba(249,115,22,.12);color:#ea580c;padding:3px 8px;border-radius:6px;font-size:11px;font-weight:800;">${o.pickupTime||'Immediate'}</span></td>
-            <td><span style="font-size:11px;font-weight:700;color:#64748b;">${o.payMethod||'UPI'}</span></td>
-            <td style="color:#64748b;font-size:12px;">${time}</td>
+            <td><span style="color:#f1f5f9;font-weight:800;">${o.userName||'—'}</span></td>
+            <td style="max-width:190px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="${items}">${items}</td>
+            <td><strong style="color:#f1f5f9;">₹${o.totalAmount}</strong></td>
+            <td><span style="background:rgba(249,115,22,.12);color:#fb923c;padding:3px 9px;border-radius:6px;font-size:11px;font-weight:800;">${o.pickupTime||'Immediate'}</span></td>
+            <td style="font-size:11px;font-weight:700;">${o.payMethod||'UPI'}</td>
+            <td style="font-size:12px;">${time}</td>
             <td><span class="badge badge-${o.status}">${o.status.replace(/_/g,' ')}</span></td>
-            <td><button class="action-btn ${BTN_CLASS[o.status]}" onclick="advanceStatus(${o.orderId})" ${!next?'disabled':''}>${BTN_LABEL[o.status]}</button></td>
+            <td><button class="action-btn ${BCLS[o.status]}" onclick="advanceStatus(${o.orderId})" ${!next?'disabled':''}>${BLBL[o.status]}</button></td>
         </tr>`;
     }).join('');
 }
 
-// ── Animated counter ──────────────────────────────────────────
-function animateCount(id, target) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const start    = parseInt(el.textContent) || 0;
-    const duration = 500;
-    const step     = (target - start) / (duration / 16);
-    let current = start;
-    const timer = setInterval(() => {
-        current += step;
-        if ((step>0 && current>=target) || (step<0 && current<=target)) { el.textContent=target; clearInterval(timer); }
-        else el.textContent = Math.round(current);
-    }, 16);
-}
-
 // ── Analytics ─────────────────────────────────────────────────
-let _ch = {};
-function _kill(id) { const c=Chart.getChart(id); if(c) c.destroy(); }
-
-const GLASS_OPTS = {
-    plugins: { legend:{ labels:{ font:{weight:'bold',size:11}, boxWidth:12 } } },
-    responsive: true
+const darkGrid = { color:'rgba(255,255,255,.06)' };
+const darkTick = { color:'#64748b', font:{ weight:'bold', size:11 } };
+const CHART_OPTS = {
+    responsive:true,
+    plugins:{ legend:{ labels:{ color:'#94a3b8', font:{weight:'bold',size:11}, boxWidth:12, padding:16 } } },
+    scales:{ x:{ grid:darkGrid, ticks:darkTick }, y:{ grid:darkGrid, ticks:darkTick, beginAtZero:true } }
 };
+const killChart = id => { const c=Chart.getChart(id); if(c) c.destroy(); };
 
 function buildAnalytics() {
-    const orders = getOrders();
-    const totalRev  = orders.reduce((s,o)=>s+o.totalAmount,0);
-    const itemsSold = orders.reduce((s,o)=>s+o.items.reduce((ss,i)=>ss+i.quantity,0),0);
-    const completed = orders.filter(o=>o.status==='COMPLETED').length;
+    const orders   = getOrders();
+    const totalRev = orders.reduce((s,o)=>s+o.totalAmount,0);
+    const items    = orders.reduce((s,o)=>s+o.items.reduce((ss,i)=>ss+i.quantity,0),0);
+    const done     = orders.filter(o=>o.status==='COMPLETED').length;
 
     document.getElementById('aTotal').textContent   = orders.length;
     document.getElementById('aRevenue').textContent = `₹${totalRev.toLocaleString('en-IN')}`;
     document.getElementById('aAvgOrder').textContent= orders.length?`₹${Math.round(totalRev/orders.length)}`:'₹0';
-    document.getElementById('aItemsSold').textContent = itemsSold;
-    document.getElementById('aRate').textContent    = orders.length?`${Math.round(completed/orders.length*100)}%`:'0%';
+    document.getElementById('aItemsSold').textContent = items;
+    document.getElementById('aRate').textContent    = orders.length?`${Math.round(done/orders.length*100)}%`:'0%';
 
-    // Peak Hours
+    // Peak hours
     const hrs = Array(24).fill(0);
-    orders.forEach(o => hrs[new Date(o.createdAt).getHours()]++);
-    const hrLabels = Array.from({length:13},(_,i)=>`${(i+7)%12||12}${i+7<12?'am':'pm'}`);
-    _kill('peakChart');
-    new Chart(document.getElementById('peakChart'), {
+    orders.forEach(o=>hrs[new Date(o.createdAt).getHours()]++);
+    const slice = hrs.slice(7,20);
+    const maxH  = Math.max(...slice,1);
+    killChart('peakChart');
+    new Chart(document.getElementById('peakChart'),{
         type:'bar',
-        data:{ labels:hrLabels, datasets:[{ label:'Orders', data:hrs.slice(7,20),
-            backgroundColor: hrs.slice(7,20).map((_,i)=>i===hrs.slice(7,20).indexOf(Math.max(...hrs.slice(7,20)))?'#f97316':'rgba(249,115,22,0.45)'),
-            borderRadius:8, borderSkipped:false }] },
-        options:{ ...GLASS_OPTS, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true,ticks:{stepSize:1},grid:{color:'rgba(0,0,0,.05)'}}, x:{grid:{display:false}} } }
+        data:{ labels:Array.from({length:13},(_,i)=>`${(i+7)%12||12}${i+7<12?'am':'pm'}`),
+            datasets:[{label:'Orders',data:slice,
+                backgroundColor:slice.map(v=>v===maxH?'#f97316':'rgba(249,115,22,0.35)'),
+                borderRadius:6,borderSkipped:false}] },
+        options:{...CHART_OPTS,plugins:{legend:{display:false}}}
     });
 
     // Status doughnut
-    const sc = {PENDING:0,PREPARING:0,READY_FOR_PICKUP:0,COMPLETED:0};
+    const sc={PENDING:0,PREPARING:0,READY_FOR_PICKUP:0,COMPLETED:0};
     orders.forEach(o=>sc[o.status]=(sc[o.status]||0)+1);
-    _kill('statusChart');
-    new Chart(document.getElementById('statusChart'), {
+    killChart('statusChart');
+    new Chart(document.getElementById('statusChart'),{
         type:'doughnut',
-        data:{ labels:['Pending','Preparing','Ready for Pickup','Completed'],
-            datasets:[{ data:Object.values(sc), backgroundColor:['#fbbf24','#60a5fa','#4ade80','#94a3b8'], borderWidth:3, borderColor:'rgba(255,255,255,0.8)', hoverOffset:8 }] },
-        options:{ ...GLASS_OPTS, cutout:'65%' }
+        data:{ labels:['Pending','Preparing','Ready','Completed'],
+            datasets:[{data:Object.values(sc),
+                backgroundColor:['#f59e0b','#6366f1','#22c55e','#475569'],
+                borderWidth:2, borderColor:'#1e293b', hoverOffset:10}] },
+        options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{weight:'bold',size:11}}}},cutout:'62%'}
     });
 
-    // Revenue last 7 days
+    // Revenue 7 days
     const dayRev={};
-    for(let i=6;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); dayRev[d.toDateString()]=0; }
-    orders.forEach(o=>{ const k=new Date(o.createdAt).toDateString(); if(k in dayRev) dayRev[k]+=o.totalAmount; });
-    _kill('revenueChart');
-    new Chart(document.getElementById('revenueChart'), {
+    for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);dayRev[d.toDateString()]=0;}
+    orders.forEach(o=>{const k=new Date(o.createdAt).toDateString();if(k in dayRev)dayRev[k]+=o.totalAmount;});
+    killChart('revenueChart');
+    new Chart(document.getElementById('revenueChart'),{
         type:'line',
         data:{ labels:Object.keys(dayRev).map(k=>new Date(k).toLocaleDateString('en-IN',{weekday:'short',day:'numeric'})),
-            datasets:[{ label:'Revenue ₹', data:Object.values(dayRev),
-                borderColor:'#f97316', backgroundColor:'rgba(249,115,22,0.12)',
-                fill:true, tension:0.4, pointBackgroundColor:'#f97316', pointRadius:5, pointHoverRadius:8 }] },
-        options:{ ...GLASS_OPTS, plugins:{legend:{display:false}}, scales:{ y:{beginAtZero:true,grid:{color:'rgba(0,0,0,.05)'}}, x:{grid:{display:false}} } }
+            datasets:[{label:'Revenue ₹',data:Object.values(dayRev),
+                borderColor:'#f97316',backgroundColor:'rgba(249,115,22,.10)',
+                fill:true,tension:.4,pointBackgroundColor:'#f97316',pointRadius:5,pointHoverRadius:8}] },
+        options:{...CHART_OPTS,plugins:{legend:{display:false}}}
     });
 
     // Payment pie
     const pm={UPI:0,Card:0,Cash:0};
     orders.forEach(o=>{const m=o.payMethod||'UPI';pm[m]=(pm[m]||0)+1;});
-    _kill('payChart');
-    new Chart(document.getElementById('payChart'), {
+    killChart('payChart');
+    new Chart(document.getElementById('payChart'),{
         type:'pie',
-        data:{ labels:Object.keys(pm), datasets:[{ data:Object.values(pm),
-            backgroundColor:['#8b5cf6','#3b82f6','#22c55e'], borderWidth:3, borderColor:'rgba(255,255,255,0.8)', hoverOffset:8 }] },
-        options:{ ...GLASS_OPTS }
+        data:{ labels:Object.keys(pm),
+            datasets:[{data:Object.values(pm),
+                backgroundColor:['#8b5cf6','#3b82f6','#22c55e'],
+                borderWidth:2,borderColor:'#1e293b',hoverOffset:10}] },
+        options:{responsive:true,plugins:{legend:{labels:{color:'#94a3b8',font:{weight:'bold',size:11}}}}}
     });
 
     // Top items
@@ -660,24 +570,21 @@ function buildAnalytics() {
     orders.forEach(o=>o.items.forEach(i=>{it[i.name]=(it[i.name]||0)+i.quantity;}));
     const sorted = Object.entries(it).sort((a,b)=>b[1]-a[1]).slice(0,8);
     const maxQ   = sorted[0]?.[1]||1;
-    const rankEl = ['rank-1','rank-2','rank-3'];
-    const rankTxt= ['🥇','🥈','🥉'];
+    const RC = ['r1','r2','r3']; const RE = ['🥇','🥈','🥉'];
     const el = document.getElementById('topItemsList');
-    if (!sorted.length) { el.innerHTML='<div class="empty-state"><div class="empty-icon">🍽️</div><p>No data yet.</p></div>'; return; }
+    if(!sorted.length){el.innerHTML='<div class="empty-state"><div class="empty-icon">🍽️</div><p>No data yet.</p></div>';return;}
     el.innerHTML = sorted.map(([name,qty],i)=>`
-        <div class="top-item-row">
-            <div class="rank ${rankEl[i]||'rank-n'}">${rankTxt[i]||i+1}</div>
+        <div class="top-item">
+            <div class="rank ${RC[i]||''}">${RE[i]||i+1}</div>
             <div class="item-info">
                 <div class="item-name">${name}</div>
-                <div class="item-bar-bg"><div class="item-bar-fill" style="width:${(qty/maxQ*100).toFixed(1)}%"></div></div>
+                <div class="bar-bg"><div class="bar-fill" style="width:${(qty/maxQ*100).toFixed(1)}%"></div></div>
             </div>
-            <div class="item-count">${qty} sold</div>
+            <div class="item-qty">${qty} sold</div>
         </div>`).join('');
 }
 
-// Initial load
 loadOrders();
-
 </script>
 </body>
 </html>
